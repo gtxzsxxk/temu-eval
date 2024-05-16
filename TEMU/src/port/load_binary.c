@@ -13,6 +13,7 @@ int port_load_binary_from_file(const char *path, uint32_t addr) {
     uint8_t load_buffer[256];
     uint32_t main_memory_offset = addr - (uint32_t) RAM_BASE_ADDR;
     uint32_t file_read_size = 0;
+#ifndef BARE_METAL_PLATFORM
     FILE *fp = PORT_FILE_OPEN(path, "rb");
     if (!fp) {
         printf(TEMU_PRINT_BANNER"Failed to access %s\n", path);
@@ -27,8 +28,37 @@ int port_load_binary_from_file(const char *path, uint32_t addr) {
         file_read_size += read_n;
     }
     PORT_FILE_CLOSE(fp);
-#ifndef BARE_METAL_PLATFORM
     printf(TEMU_PRINT_BANNER"Write %u bytes of %s to 0x%8x -- 0x%x.\n", file_read_size, path, addr, main_memory_offset);
-#endif
     return 0;
+
+#else
+    static uint8_t initialized = 0;
+    static FATFS fatfs;
+    FRESULT fResult;
+    FIL file;
+    UINT readNumber;
+
+    if(!initialized) {
+        fResult = f_mount(&fatfs, "", 1);
+        initialized = 1;
+        if (fResult != FR_OK) {
+            return -1;
+        }
+    }
+
+    fResult = PORT_FILE_OPEN(&file, path, FA_OPEN_EXISTING|FA_READ);
+    if(fResult != FR_OK) {
+        return -1;
+    }
+
+    while (!PORT_FILE_EOF(&file)) {
+        PORT_FILE_READ(&file, load_buffer, 256, &readNumber);
+        for (uint32_t i = 0; i < readNumber; i++) {
+            port_main_memory_load_b(main_memory_offset, load_buffer[i]);
+            main_memory_offset++;
+        }
+        file_read_size += readNumber;
+    }
+    PORT_FILE_CLOSE(&file);
+#endif
 }

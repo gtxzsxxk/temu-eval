@@ -16,7 +16,11 @@
 #define PORT_FILE_READ fread
 #define PORT_FILE_CLOSE fclose
 #else
-#error Implement the file operations for BARE METAL PLATFORMs
+#include "fatfs.h"
+#define PORT_FILE_OPEN f_open
+#define PORT_FILE_EOF f_eof
+#define PORT_FILE_READ f_read
+#define PORT_FILE_CLOSE f_close
 #endif
 
 int port_load_binary_from_file(const char *path, uint32_t addr);
