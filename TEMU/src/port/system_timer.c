@@ -11,5 +11,5 @@ port_clock_t port_system_timer_get_ticks(void) {
 }
 
 #else
-#warning Define function port_system_timer_get_ticks outside of TEMU !
+//#warning Define function port_system_timer_get_ticks outside of TEMU !
 #endif

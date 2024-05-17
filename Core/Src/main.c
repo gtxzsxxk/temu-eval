@@ -22,7 +22,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "port/console.h"
+#include "port/system_timer.h"
+#include "port/main_memory.h"
+#include "port/port_main.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -343,6 +346,18 @@ int port_console_read(void) {
     return 0;
 }
 
+uint64_t hostTimerTicks = 0;
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == htim3.Instance) {
+        hostTimerTicks++;
+    }
+}
+
+port_clock_t port_system_timer_get_ticks(void) {
+    return hostTimerTicks;
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -380,11 +395,15 @@ int main(void) {
     MX_TIM3_Init();
     /* USER CODE BEGIN 2 */
 //    psramTest();
-    fatfsTest();
+//    fatfsTest();
+//    HAL_TIM_Base_Start_IT(&htim3);
+    psramReset();
     /* USER CODE END 2 */
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
+    port_main(6, temu_default_args);
+
     while (1) {
         /* USER CODE END WHILE */
 

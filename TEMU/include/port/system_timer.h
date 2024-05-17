@@ -4,12 +4,14 @@
 
 #ifndef TEMU_SYSTEM_TIMER_H
 #define TEMU_SYSTEM_TIMER_H
+#include "parameters.h"
 
 #ifndef BARE_METAL_PLATFORM
 #include <time.h>
 #define port_clock_t clock_t
 #define PORT_CLOCKS_PER_SEC CLOCKS_PER_SEC
 #else
+#include <stdint.h>
 #define port_clock_t uint64_t
 #define PORT_CLOCKS_PER_SEC 1000000
 #endif

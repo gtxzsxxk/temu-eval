@@ -24,8 +24,8 @@ inline void port_main_memory_load_b(uint32_t offset, uint8_t data) {
 
 #else
 
-#warning Define function port_main_memory_read_w outside of TEMU!
-#warning Define function port_main_memory_write_w outside of TEMU!
-#warning Define function port_main_memory_load_b outside of TEMU!
+//#warning Define function port_main_memory_read_w outside of TEMU!
+//#warning Define function port_main_memory_write_w outside of TEMU!
+//#warning Define function port_main_memory_load_b outside of TEMU!
 
 #endif
