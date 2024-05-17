@@ -129,7 +129,7 @@ uint32_t port_main_memory_read_w(uint32_t offset) {
             return 0xff;
     }
 
-    int n = 10;
+    int n = 50;
     while (n) n--;
 
     return res;
@@ -187,7 +187,7 @@ void port_main_memory_write_w(uint32_t offset, uint32_t data) {
             return;
     }
 
-    int n = 10;
+    int n = 50;
     while (n) n--;
 }
 
@@ -240,7 +240,7 @@ void port_main_memory_load_b(uint32_t offset, uint8_t byteData) {
             return;
     }
 
-    int n = 10;
+    int n = 50;
     while (n) n--;
 }
 
