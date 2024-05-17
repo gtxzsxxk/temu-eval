@@ -19,9 +19,16 @@
   * --with=0x81000000#uImage.gz
  */
 
-const char temu_default_args[] = "--addr=0x81fa0000 --exec=fw_jump.bin --with=0x80000000#u-boot.bin --with=0x81ffd800#u-boot.dtb --with=0x81000000#uImage.gz";
+const char *temu_default_args[] = {
+        "temu_default_args",
+        "--addr=0x81fa0000",
+        "--exec=fw_jump.bin",
+        "--with=0x80000000#u-boot.bin",
+        "--with=0x81ffd800#u-boot.dtb",
+        "--with=0x81000000#uImage.gz"
+};
 
-int port_main(int argc, char **argv) {
+int port_main(int argc, const char **argv) {
     /* TODO: optimize or refactor this argument parsing */
     char buffer[32] = {0};
     char exec_path[64] = {0};
