@@ -97,18 +97,13 @@ uint32_t port_main_memory_read_w(uint32_t offset) {
             return 0xff;
     }
 
-    HAL_SPI_Transmit(&hspi1, (uint8_t *) "\x03", 1, 100);
-    scratch = offset >> 16;
-    HAL_SPI_Transmit(&hspi1, &scratch, 1, 100);
-    scratch = offset >> 8;
-    HAL_SPI_Transmit(&hspi1, &scratch, 1, 100);
-    scratch = offset;
-    HAL_SPI_Transmit(&hspi1, &scratch, 1, 100);
+    uint8_t sendBuffer[] = {0x03, offset >> 16, offset >> 8, offset};
 
-    scratch = 0xff;
+    HAL_SPI_Transmit(&hspi1, sendBuffer, 4, 100);
+
     for (uint8_t i = 0; i < 4; i++) {
         uint8_t recv;
-        HAL_SPI_TransmitReceive(&hspi1, &scratch, &recv, 1, 100);
+        HAL_SPI_Receive(&hspi1, &recv, 1, 100);
         res |= recv << (i << 3);
     }
 
@@ -157,13 +152,9 @@ void port_main_memory_write_w(uint32_t offset, uint32_t data) {
             return;
     }
 
-    HAL_SPI_Transmit(&hspi1, (uint8_t *) "\x02", 1, 100);
-    scratch = offset >> 16;
-    HAL_SPI_Transmit(&hspi1, &scratch, 1, 100);
-    scratch = offset >> 8;
-    HAL_SPI_Transmit(&hspi1, &scratch, 1, 100);
-    scratch = offset;
-    HAL_SPI_Transmit(&hspi1, &scratch, 1, 100);
+    uint8_t sendBuffer[] = {0x02, offset >> 16, offset >> 8, offset};
+
+    HAL_SPI_Transmit(&hspi1, sendBuffer, 4, 100);
 
     for (uint8_t i = 0; i < 4; i++) {
         scratch = data >> (i << 3);
