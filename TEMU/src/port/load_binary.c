@@ -38,7 +38,7 @@ int port_load_binary_from_file(const char *path, uint32_t addr) {
     FIL file;
     UINT readNumber;
 
-    if(!initialized) {
+    if (!initialized) {
         fResult = f_mount(&fatfs, "", 1);
         initialized = 1;
         if (fResult != FR_OK) {
@@ -46,19 +46,22 @@ int port_load_binary_from_file(const char *path, uint32_t addr) {
         }
     }
 
-    fResult = PORT_FILE_OPEN(&file, path, FA_OPEN_EXISTING|FA_READ);
-    if(fResult != FR_OK) {
+    fResult = PORT_FILE_OPEN(&file, path, FA_OPEN_EXISTING | FA_READ);
+    if (fResult != FR_OK) {
         return -1;
     }
 
     while (!PORT_FILE_EOF(&file)) {
-        PORT_FILE_READ(&file, load_buffer, 256, &readNumber);
-        for (uint32_t i = 0; i < readNumber; i++) {
-            port_main_memory_load_b(main_memory_offset, load_buffer[i]);
-            main_memory_offset++;
+        fResult = PORT_FILE_READ(&file, load_buffer, 256, &readNumber);
+        if (fResult != FR_OK) {
+            return -1;
         }
+        port_main_memory_load_byte_batch(main_memory_offset, load_buffer, readNumber);
+        main_memory_offset += readNumber;
         file_read_size += readNumber;
     }
     PORT_FILE_CLOSE(&file);
+
+    return 0;
 #endif
 }
