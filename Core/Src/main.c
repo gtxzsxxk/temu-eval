@@ -62,7 +62,7 @@ static void MX_SDIO_SD_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-uint32_t psramReadWord(uint32_t offset) {
+uint32_t port_main_memory_read_w(uint32_t offset) {
     /* Dispatch address to different chips */
     uint8_t dispatch = offset >> 23;
     uint8_t scratch;
@@ -123,7 +123,7 @@ uint32_t psramReadWord(uint32_t offset) {
     return res;
 }
 
-void psramWriteWord(uint32_t offset, uint32_t data) {
+void port_main_memory_write_w(uint32_t offset, uint32_t data) {
     /* Dispatch address to different chips */
     uint8_t dispatch = offset >> 23;
     uint8_t scratch;
@@ -183,11 +183,11 @@ void psramTest() {
     uint32_t dutAddr;
 
     for (dutAddr = 0; dutAddr < 0x10000; dutAddr++) {
-        psramWriteWord(dutAddr << 2, dutAddr << 2);
+        port_main_memory_write_w(dutAddr << 2, dutAddr << 2);
     }
 
     for (dutAddr = 0; dutAddr < 0x10000; dutAddr++) {
-        uint32_t dutData = psramReadWord(dutAddr << 2);
+        uint32_t dutData = port_main_memory_read_w(dutAddr << 2);
         if ((dutAddr << 2) != dutData) {
             continue;
         }
