@@ -55,6 +55,7 @@ int port_console_read(void) {
 }
 
 #else
-#warning Define function port_console_write outside of TEMU!
-#warning Define function port_console_read outside of TEMU!
+//#warning Define function port_console_write outside of TEMU!
+//#warning Define function port_console_read outside of TEMU!
+void port_console_flush(void) { }
 #endif
