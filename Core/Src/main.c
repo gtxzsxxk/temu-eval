@@ -244,6 +244,68 @@ void port_main_memory_load_b(uint32_t offset, uint8_t byteData) {
     while (n) n--;
 }
 
+void port_main_memory_load_byte_batch(uint32_t offset, uint8_t *byteData, uint32_t batchSize) {
+    /* Dispatch address to different chips */
+    uint8_t dispatch = offset >> 23;
+    uint8_t scratch;
+
+    switch (dispatch) {
+        case 0:
+            HAL_GPIO_WritePin(PSRAM_CS0_GPIO_Port, PSRAM_CS0_Pin, GPIO_PIN_RESET);
+            break;
+        case 1:
+            HAL_GPIO_WritePin(PSRAM_CS1_GPIO_Port, PSRAM_CS1_Pin, GPIO_PIN_RESET);
+            break;
+        case 2:
+            HAL_GPIO_WritePin(PSRAM_CS2_GPIO_Port, PSRAM_CS2_Pin, GPIO_PIN_RESET);
+            break;
+        case 3:
+            HAL_GPIO_WritePin(PSRAM_CS3_GPIO_Port, PSRAM_CS3_Pin, GPIO_PIN_RESET);
+            break;
+        default:
+            return;
+    }
+
+    uint8_t sendBuffer[] = {0x02, offset >> 16, offset >> 8, offset};
+    HAL_SPI_Transmit(&hspi1, sendBuffer, 4, 100);
+    HAL_SPI_Transmit(&hspi1, byteData, batchSize, 100);
+
+    switch (dispatch) {
+        case 0:
+            HAL_GPIO_WritePin(PSRAM_CS0_GPIO_Port, PSRAM_CS0_Pin, GPIO_PIN_SET);
+            break;
+        case 1:
+            HAL_GPIO_WritePin(PSRAM_CS1_GPIO_Port, PSRAM_CS1_Pin, GPIO_PIN_SET);
+            break;
+        case 2:
+            HAL_GPIO_WritePin(PSRAM_CS2_GPIO_Port, PSRAM_CS2_Pin, GPIO_PIN_SET);
+            break;
+        case 3:
+            HAL_GPIO_WritePin(PSRAM_CS3_GPIO_Port, PSRAM_CS3_Pin, GPIO_PIN_SET);
+            break;
+        default:
+            return;
+    }
+
+    int n = 50;
+    while (n) n--;
+}
+
+void psramReset() {
+    HAL_GPIO_WritePin(PSRAM_CS0_GPIO_Port, PSRAM_CS0_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(PSRAM_CS1_GPIO_Port, PSRAM_CS1_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(PSRAM_CS2_GPIO_Port, PSRAM_CS2_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(PSRAM_CS3_GPIO_Port, PSRAM_CS3_Pin, GPIO_PIN_RESET);
+
+    uint8_t sendBuffer[] = {0x66, 0x99};
+    HAL_SPI_Transmit(&hspi1, sendBuffer, 2, 100);
+
+    HAL_GPIO_WritePin(PSRAM_CS0_GPIO_Port, PSRAM_CS0_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(PSRAM_CS1_GPIO_Port, PSRAM_CS1_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(PSRAM_CS2_GPIO_Port, PSRAM_CS2_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(PSRAM_CS3_GPIO_Port, PSRAM_CS3_Pin, GPIO_PIN_SET);
+}
+
 void psramTest() {
     uint32_t dutAddr;
 
