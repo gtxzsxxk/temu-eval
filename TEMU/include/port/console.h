@@ -6,6 +6,7 @@
 #define TEMU_CONSOLE_H
 #include <stdint.h>
 #include "parameters.h"
+#include "uart8250.h"
 
 void port_os_console_init();
 

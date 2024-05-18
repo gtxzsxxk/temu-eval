@@ -295,8 +295,14 @@ int uart8250_init(void) {
 
 #endif
 
-_Noreturn void *uart8250_listening(void *ptr) {
-    for (;;) {
+#ifndef BARE_METAL_PLATFORM
+_Noreturn
+#endif
+void *uart8250_listening(void *ptr) {
+#ifndef BARE_METAL_PLATFORM
+    for (;;)
+#endif
+    {
         int ch = port_console_read();
         port_lock_lock(&rx_fifo_lock, 1);
         if (rx_fifo_tail >= UART_FIFO_SIZE - 1) {

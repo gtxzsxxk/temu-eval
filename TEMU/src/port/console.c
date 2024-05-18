@@ -2,7 +2,6 @@
 // Created by hanyuan on 2024/4/23.
 //
 #include "port/console.h"
-#include "uart8250.h"
 
 #if !defined(WIN32) && !defined(WIN64) && !defined(BARE_METAL_PLATFORM)
 

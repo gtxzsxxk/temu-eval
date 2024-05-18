@@ -15,6 +15,9 @@ void uart8250_tick(void);
 
 int uart8250_init(void);
 
-_Noreturn void *uart8250_listening(void* ptr);
+#ifndef BARE_METAL_PLATFORM
+_Noreturn
+#endif
+void *uart8250_listening(void* ptr);
 
 #endif //TEMU_UART8250_H
