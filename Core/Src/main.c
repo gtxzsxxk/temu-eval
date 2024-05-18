@@ -119,9 +119,6 @@ void port_main_memory_read_word_batch(uint32_t offset, uint32_t *readBuffer, uin
         default:
             return;
     }
-
-//    int n = 50;
-//    while (n) n--;
 }
 
 void port_main_memory_write_word_batch(uint32_t offset, uint32_t *wordData, uint32_t batchSize) {
@@ -166,9 +163,6 @@ void port_main_memory_write_word_batch(uint32_t offset, uint32_t *wordData, uint
         default:
             return;
     }
-
-//    int n = 50;
-//    while (n) n--;
 }
 
 void port_main_memory_load_byte_batch(uint32_t offset, uint8_t *byteData, uint32_t batchSize) {

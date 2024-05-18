@@ -47,7 +47,7 @@ elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel")
 else ()
     message(STATUS "Minimal optimization, debug info included")
 #    add_compile_options(-O1 -g)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -flto -fuse-linker-plugin -fno-strict-aliasing")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Ofast -flto -fuse-linker-plugin -fno-strict-aliasing")
 endif ()
 
 include_directories(Core/Inc Drivers/STM32F1xx_HAL_Driver/Inc
