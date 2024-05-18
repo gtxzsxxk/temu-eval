@@ -52,6 +52,7 @@ DMA_HandleTypeDef hdma_spi1_rx;
 
 TIM_HandleTypeDef htim3;
 
+UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
@@ -72,6 +73,8 @@ static void MX_SDIO_SD_Init(void);
 static void MX_USART3_UART_Init(void);
 
 static void MX_TIM3_Init(void);
+
+static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -146,7 +149,6 @@ void port_main_memory_write_word_batch(uint32_t offset, uint32_t *wordData, uint
     }
 
     uint8_t sendBuffer[] = {0x02, offset >> 16, offset >> 8, offset};
-
     HAL_SPI_Transmit(&hspi1, sendBuffer, 4, 100);
     HAL_SPI_Transmit_DMA(&hspi1, (uint8_t *) wordData, batchSize << 2);
 }
@@ -221,36 +223,27 @@ void psramReset() {
     HAL_GPIO_WritePin(PSRAM_CS3_GPIO_Port, PSRAM_CS3_Pin, GPIO_PIN_SET);
 }
 
-void fatfsTest() {
-    FATFS fatfs;
-    FIL file;
-    FRESULT fResult;
-    BYTE buffer[128];
-    UINT byteRead;
-    fResult = f_mount(&fatfs, "0:", 1);
-    if (fResult != FR_OK) {
-        return;
-    }
-
-    fResult = f_open(&file, "0:hello.txt", FA_OPEN_EXISTING | FA_READ);
-    if (fResult != FR_OK) {
-        return;
-    }
-
-    while (!f_eof(&file)) {
-        f_read(&file, buffer, 128, &byteRead);
-    }
-
-    f_close(&file);
-}
+uint8_t uartRecvData = 0;
 
 void port_console_write(uint8_t c) {
+    HAL_UART_Transmit(&huart1, &c, 1, 100);
     HAL_UART_Transmit(&huart3, &c, 1, 100);
 }
 
 int port_console_read(void) {
-    return 0;
+    return uartRecvData;
 }
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+    if (huart->Instance == huart1.Instance) {
+        uart8250_listening(NULL);
+        HAL_UART_Receive_IT(&huart1, &uartRecvData, 1);
+    } else if (huart->Instance == huart3.Instance) {
+        uart8250_listening(NULL);
+        HAL_UART_Receive_IT(&huart3, &uartRecvData, 1);
+    }
+}
+
 
 uint64_t hostTimerTicks = 0;
 
@@ -299,10 +292,12 @@ int main(void) {
     MX_FATFS_Init();
     MX_USART3_UART_Init();
     MX_TIM3_Init();
+    MX_USART1_UART_Init();
     /* USER CODE BEGIN 2 */
-//    fatfsTest();
-    HAL_TIM_Base_Start_IT(&htim3);
     psramReset();
+    HAL_TIM_Base_Start_IT(&htim3);
+    HAL_UART_Receive_IT(&huart1, &uartRecvData, 1);
+    HAL_UART_Receive_IT(&huart3, &uartRecvData, 1);
     /* USER CODE END 2 */
 
     /* Infinite loop */
@@ -463,6 +458,37 @@ static void MX_TIM3_Init(void) {
     /* USER CODE BEGIN TIM3_Init 2 */
 
     /* USER CODE END TIM3_Init 2 */
+
+}
+
+/**
+  * @brief USART1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART1_UART_Init(void) {
+
+    /* USER CODE BEGIN USART1_Init 0 */
+
+    /* USER CODE END USART1_Init 0 */
+
+    /* USER CODE BEGIN USART1_Init 1 */
+
+    /* USER CODE END USART1_Init 1 */
+    huart1.Instance = USART1;
+    huart1.Init.BaudRate = 115200;
+    huart1.Init.WordLength = UART_WORDLENGTH_8B;
+    huart1.Init.StopBits = UART_STOPBITS_1;
+    huart1.Init.Parity = UART_PARITY_NONE;
+    huart1.Init.Mode = UART_MODE_TX_RX;
+    huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+    if (HAL_UART_Init(&huart1) != HAL_OK) {
+        Error_Handler();
+    }
+    /* USER CODE BEGIN USART1_Init 2 */
+
+    /* USER CODE END USART1_Init 2 */
 
 }
 
