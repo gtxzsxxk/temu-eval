@@ -103,19 +103,6 @@ uint32_t vm_lookup_paddr(uint32_t vaddr, uint8_t *page_fault, uint8_t access_fla
     return 0x9a9a9a9a;
 }
 
-/* Used for debug only */
-uint8_t pm_read_b(uint32_t addr, uint8_t *intr) {
-    if (addr >= RAM_BASE_ADDR && addr < RAM_BASE_ADDR + RAM_SIZE) {
-        uint8_t offset = addr & 0x03;
-        return port_main_memory_read_w((addr & 0xfffffffc) - RAM_BASE_ADDR) >> offset;
-    } else {
-        if (intr) {
-            *intr = 1;
-        }
-        return 0xff;
-    }
-}
-
 uint8_t mmu_read_b(uint32_t addr, uint8_t *intr) {
     if (intr) {
         *intr = 0;
@@ -264,6 +251,19 @@ void mmu_register_write(uint8_t rd, uint32_t value) {
 
 #if TEMU_DEBUG_CODE
 #include <stdio.h>
+
+/* Used for debug only */
+uint8_t pm_read_b(uint32_t addr, uint8_t *intr) {
+    if (addr >= RAM_BASE_ADDR && addr < RAM_BASE_ADDR + RAM_SIZE) {
+        uint8_t offset = addr & 0x03;
+        return port_main_memory_read_w((addr & 0xfffffffc) - RAM_BASE_ADDR) >> offset;
+    } else {
+        if (intr) {
+            *intr = 1;
+        }
+        return 0xff;
+    }
+}
 
 void mmu_debug_printreg(uint32_t pc_prev_exec) {
     printf("Emulator registers debug print\n");
