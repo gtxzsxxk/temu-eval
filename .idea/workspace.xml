@@ -3,9 +3,9 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
-  <component name="CMakePresetLoader"><![CDATA[{
-  "useNewFormat": true
-}]]></component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
   <component name="CMakeReloadState">
     <option name="reloaded" value="true" />
   </component>
@@ -20,8 +20,14 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="934e99c3-cd08-4efe-829c-cfce81a049bd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="934e99c3-cd08-4efe-829c-cfce81a049bd" name="Changes" comment="stm32: reset the heap size for saving RAM space">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/main.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TEMU/include/port/main_memory.h" beforeDir="false" afterPath="$PROJECT_DIR$/TEMU/include/port/main_memory.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TEMU/src/cache.c" beforeDir="false" afterPath="$PROJECT_DIR$/TEMU/src/cache.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TEMU/src/machine.c" beforeDir="false" afterPath="$PROJECT_DIR$/TEMU/src/machine.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/temu-eval.ioc" beforeDir="false" afterPath="$PROJECT_DIR$/temu-eval.ioc" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,6 +36,22 @@
   </component>
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="EmbeddedSvdWindowState">
+    <option name="columnWidths">
+      <list>
+        <option value="237" />
+        <option value="102" />
+        <option value="2113" />
+      </list>
+    </option>
+    <option name="columnOrder">
+      <list>
+        <option value="Name" />
+        <option value="Value" />
+        <option value="Description" />
+      </list>
+    </option>
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug-MinGW STM32" />
   <component name="Git.Settings">
@@ -40,33 +62,34 @@
     <option name="majorVersion" value="2023" />
     <option name="minorVersion" value="2" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 1
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
   <component name="ProjectId" id="2gY5mCQrSMH8zERgy0uMKC7qU7n" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "D:/code/temu-eval",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "settings.editor.selected.configurable": "CMakeSettings",
-    "structure.view.defaults.are.configured": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/code/temu-eval&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Debugger.ObjectiveC&quot;,
+    &quot;structure.view.defaults.are.configured&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="OpenOCD Download &amp; Run.temu-eval.elf">
     <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
@@ -99,8 +122,123 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1715861826916</updated>
-      <workItem from="1715861852368" duration="11978000" />
+      <workItem from="1715861852368" duration="12638000" />
+      <workItem from="1715926301498" duration="31173000" />
+      <workItem from="1716003760709" duration="1481000" />
     </task>
+    <task id="LOCAL-00001" summary="initial commit">
+      <option name="closed" value="true" />
+      <created>1715875445572</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1715875445572</updated>
+    </task>
+    <task id="LOCAL-00002" summary="temu: implement a fatfs version load_binary">
+      <option name="closed" value="true" />
+      <created>1715876096564</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1715876096564</updated>
+    </task>
+    <task id="LOCAL-00003" summary="stm32: port port_main_memory_read_w and port_main_memory_write_w">
+      <option name="closed" value="true" />
+      <created>1715926456753</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1715926456754</updated>
+    </task>
+    <task id="LOCAL-00004" summary="stm32: support port_main_memory_load_b">
+      <option name="closed" value="true" />
+      <created>1715928688192</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1715928688192</updated>
+    </task>
+    <task id="LOCAL-00005" summary="stm32: add peripheral TIM3 and USART3">
+      <option name="closed" value="true" />
+      <created>1715928720166</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1715928720166</updated>
+    </task>
+    <task id="LOCAL-00006" summary="port: add undefined function port_console_flush">
+      <option name="closed" value="true" />
+      <created>1715939810448</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1715939810448</updated>
+    </task>
+    <task id="LOCAL-00007" summary="port: lint the code of function port_load_binary_from_file">
+      <option name="closed" value="true" />
+      <created>1715939829147</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1715939829147</updated>
+    </task>
+    <task id="LOCAL-00008" summary="stm32: implement fast loading by batch">
+      <option name="closed" value="true" />
+      <created>1715939864405</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1715939864405</updated>
+    </task>
+    <task id="LOCAL-00009" summary="stm32: fix the psram SPI incorrect settings of CPOL and CPHA">
+      <option name="closed" value="true" />
+      <created>1715939909996</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1715939909996</updated>
+    </task>
+    <task id="LOCAL-00010" summary="stm32: enlarge the delay of PSRAM IO CS high signal">
+      <option name="closed" value="true" />
+      <created>1715939942953</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1715939942953</updated>
+    </task>
+    <task id="LOCAL-00011" summary="stm32: optimize the psram SPI I/O">
+      <option name="closed" value="true" />
+      <created>1715940018247</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1715940018247</updated>
+    </task>
+    <task id="LOCAL-00012" summary="stm32: port TEMU functions to stm32 platform with HAL library">
+      <option name="closed" value="true" />
+      <created>1715940071313</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1715940071313</updated>
+    </task>
+    <task id="LOCAL-00013" summary="port: refactor the temu default arguments">
+      <option name="closed" value="true" />
+      <created>1715940103497</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1715940103497</updated>
+    </task>
+    <task id="LOCAL-00014" summary="stm32: reset the heap size for saving RAM space">
+      <option name="closed" value="true" />
+      <created>1715940120017</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1715940120017</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -112,25 +250,30 @@
     <isAutomaticFoundErrors value="true" />
     <isAutomaticFoundErrors value="true" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="initial commit" />
+    <MESSAGE value="temu: implement a fatfs version load_binary" />
+    <MESSAGE value="stm32: port port_main_memory_read_w and port_main_memory_write_w" />
+    <MESSAGE value="stm32: support port_main_memory_load_b" />
+    <MESSAGE value="stm32: add peripheral TIM3 and USART3" />
+    <MESSAGE value="port: add undefined function port_console_flush" />
+    <MESSAGE value="port: lint the code of function port_load_binary_from_file" />
+    <MESSAGE value="stm32: implement fast loading by batch" />
+    <MESSAGE value="stm32: fix the psram SPI incorrect settings of CPOL and CPHA" />
+    <MESSAGE value="stm32: enlarge the delay of PSRAM IO CS high signal" />
+    <MESSAGE value="stm32: optimize the psram SPI I/O" />
+    <MESSAGE value="stm32: port TEMU functions to stm32 platform with HAL library" />
+    <MESSAGE value="port: refactor the temu default arguments" />
+    <MESSAGE value="stm32: reset the heap size for saving RAM space" />
+    <option name="LAST_COMMIT_MESSAGE" value="stm32: reset the heap size for saving RAM space" />
+  </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Core/Src/main.c</url>
-          <line>202</line>
-          <option name="timeStamp" value="32" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Core/Src/main.c</url>
-          <line>203</line>
-          <option name="timeStamp" value="37" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_sd.c</url>
-          <line>719</line>
-          <option name="timeStamp" value="42" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="com.jetbrains.cidr.embedded.openocd.conf.type">
+        <watch expression="hostTimerTicks" language="ObjectiveC" />
+        <watch expression="(char*)buffer" language="ObjectiveC" />
+        <watch expression="program_counter" language="ObjectiveC" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

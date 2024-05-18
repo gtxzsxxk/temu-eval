@@ -13,6 +13,8 @@
 #include "perf.h"
 #include "port/os_yield_cpu.h"
 
+#include "fatfs.h"
+
 //#define RISCV_ISA_TESTS
 
 static uint8_t access_error_intr;
@@ -27,8 +29,36 @@ _Noreturn void machine_start(uint32_t start, int printreg) {
     uint32_t instruction;
     machine_pre_boot(start);
 
+//    uint32_t startFlag = 0;
+//    FIL blackboxFile;
+//    FRESULT fRes = f_open(&blackboxFile, "blackbox.log", FA_OPEN_ALWAYS | FA_WRITE);
+//    UINT dataWritten;
+
     for (;;) {
         PERF_MONITOR_CONTINUOUS(mainloop, PERF_BATCH_100M);
+
+//        if (program_counter == 0x80000000) {
+//            startFlag = 1;
+//        }
+//
+//        if (startFlag < 0x80000 && startFlag) {
+//            f_write(&blackboxFile, &program_counter, 4, &dataWritten);
+//            startFlag++;
+//        }
+//
+//        if (startFlag == 0x80000) {
+//            f_sync(&blackboxFile);
+//            f_sync(&blackboxFile);
+//            f_sync(&blackboxFile);
+//            f_sync(&blackboxFile);
+//            f_sync(&blackboxFile);
+//            f_sync(&blackboxFile);
+//            f_sync(&blackboxFile);
+//            f_sync(&blackboxFile);
+//            f_sync(&blackboxFile);
+//            f_close(&blackboxFile);
+//            startFlag = 0;
+//        }
 
         access_error_intr = 0;
         instruction = mmu_read_inst(program_counter, &access_error_intr);

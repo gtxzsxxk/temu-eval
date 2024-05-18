@@ -77,11 +77,9 @@ static void MX_TIM3_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-uint32_t port_main_memory_read_w(uint32_t offset) {
+void port_main_memory_read_word_batch(uint32_t offset, uint32_t *readBuffer, uint32_t batchSize) {
     /* Dispatch address to different chips */
     uint8_t dispatch = offset >> 23;
-    uint8_t scratch;
-    uint32_t res = 0;
 
     switch (dispatch) {
         case 0:
@@ -97,18 +95,13 @@ uint32_t port_main_memory_read_w(uint32_t offset) {
             HAL_GPIO_WritePin(PSRAM_CS3_GPIO_Port, PSRAM_CS3_Pin, GPIO_PIN_RESET);
             break;
         default:
-            return 0xff;
+            return;
     }
 
     uint8_t sendBuffer[] = {0x03, offset >> 16, offset >> 8, offset};
 
     HAL_SPI_Transmit(&hspi1, sendBuffer, 4, 100);
-
-    for (uint8_t i = 0; i < 4; i++) {
-        uint8_t recv;
-        HAL_SPI_Receive(&hspi1, &recv, 1, 100);
-        res |= recv << (i << 3);
-    }
+    HAL_SPI_Receive(&hspi1, (uint8_t *) readBuffer, batchSize << 2, 100);
 
     switch (dispatch) {
         case 0:
@@ -124,19 +117,16 @@ uint32_t port_main_memory_read_w(uint32_t offset) {
             HAL_GPIO_WritePin(PSRAM_CS3_GPIO_Port, PSRAM_CS3_Pin, GPIO_PIN_SET);
             break;
         default:
-            return 0xff;
+            return;
     }
 
-    int n = 50;
-    while (n) n--;
-
-    return res;
+//    int n = 50;
+//    while (n) n--;
 }
 
-void port_main_memory_write_w(uint32_t offset, uint32_t data) {
+void port_main_memory_write_word_batch(uint32_t offset, uint32_t *wordData, uint32_t batchSize) {
     /* Dispatch address to different chips */
     uint8_t dispatch = offset >> 23;
-    uint8_t scratch;
 
     switch (dispatch) {
         case 0:
@@ -158,11 +148,7 @@ void port_main_memory_write_w(uint32_t offset, uint32_t data) {
     uint8_t sendBuffer[] = {0x02, offset >> 16, offset >> 8, offset};
 
     HAL_SPI_Transmit(&hspi1, sendBuffer, 4, 100);
-
-    for (uint8_t i = 0; i < 4; i++) {
-        scratch = data >> (i << 3);
-        HAL_SPI_Transmit(&hspi1, &scratch, 1, 100);
-    }
+    HAL_SPI_Transmit(&hspi1, (uint8_t *) wordData, batchSize << 2, 100);
 
     switch (dispatch) {
         case 0:
@@ -181,61 +167,8 @@ void port_main_memory_write_w(uint32_t offset, uint32_t data) {
             return;
     }
 
-    int n = 50;
-    while (n) n--;
-}
-
-void port_main_memory_load_b(uint32_t offset, uint8_t byteData) {
-    /* Dispatch address to different chips */
-    uint8_t dispatch = offset >> 23;
-    uint8_t scratch;
-
-    switch (dispatch) {
-        case 0:
-            HAL_GPIO_WritePin(PSRAM_CS0_GPIO_Port, PSRAM_CS0_Pin, GPIO_PIN_RESET);
-            break;
-        case 1:
-            HAL_GPIO_WritePin(PSRAM_CS1_GPIO_Port, PSRAM_CS1_Pin, GPIO_PIN_RESET);
-            break;
-        case 2:
-            HAL_GPIO_WritePin(PSRAM_CS2_GPIO_Port, PSRAM_CS2_Pin, GPIO_PIN_RESET);
-            break;
-        case 3:
-            HAL_GPIO_WritePin(PSRAM_CS3_GPIO_Port, PSRAM_CS3_Pin, GPIO_PIN_RESET);
-            break;
-        default:
-            return;
-    }
-
-    HAL_SPI_Transmit(&hspi1, (uint8_t *) "\x02", 1, 100);
-    scratch = offset >> 16;
-    HAL_SPI_Transmit(&hspi1, &scratch, 1, 100);
-    scratch = offset >> 8;
-    HAL_SPI_Transmit(&hspi1, &scratch, 1, 100);
-    scratch = offset;
-    HAL_SPI_Transmit(&hspi1, &scratch, 1, 100);
-
-    HAL_SPI_Transmit(&hspi1, &byteData, 1, 100);
-
-    switch (dispatch) {
-        case 0:
-            HAL_GPIO_WritePin(PSRAM_CS0_GPIO_Port, PSRAM_CS0_Pin, GPIO_PIN_SET);
-            break;
-        case 1:
-            HAL_GPIO_WritePin(PSRAM_CS1_GPIO_Port, PSRAM_CS1_Pin, GPIO_PIN_SET);
-            break;
-        case 2:
-            HAL_GPIO_WritePin(PSRAM_CS2_GPIO_Port, PSRAM_CS2_Pin, GPIO_PIN_SET);
-            break;
-        case 3:
-            HAL_GPIO_WritePin(PSRAM_CS3_GPIO_Port, PSRAM_CS3_Pin, GPIO_PIN_SET);
-            break;
-        default:
-            return;
-    }
-
-    int n = 50;
-    while (n) n--;
+//    int n = 50;
+//    while (n) n--;
 }
 
 void port_main_memory_load_byte_batch(uint32_t offset, uint8_t *byteData, uint32_t batchSize) {
@@ -281,8 +214,8 @@ void port_main_memory_load_byte_batch(uint32_t offset, uint8_t *byteData, uint32
             return;
     }
 
-    int n = 50;
-    while (n) n--;
+//    int n = 50;
+//    while (n) n--;
 }
 
 void psramReset() {
@@ -298,21 +231,6 @@ void psramReset() {
     HAL_GPIO_WritePin(PSRAM_CS1_GPIO_Port, PSRAM_CS1_Pin, GPIO_PIN_SET);
     HAL_GPIO_WritePin(PSRAM_CS2_GPIO_Port, PSRAM_CS2_Pin, GPIO_PIN_SET);
     HAL_GPIO_WritePin(PSRAM_CS3_GPIO_Port, PSRAM_CS3_Pin, GPIO_PIN_SET);
-}
-
-void psramTest() {
-    uint32_t dutAddr;
-
-    for (dutAddr = 0; dutAddr < 0x10000; dutAddr++) {
-        port_main_memory_write_w(dutAddr << 2, dutAddr << 2);
-    }
-
-    for (dutAddr = 0; dutAddr < 0x10000; dutAddr++) {
-        uint32_t dutData = port_main_memory_read_w(dutAddr << 2);
-        if ((dutAddr << 2) != dutData) {
-            continue;
-        }
-    }
 }
 
 void fatfsTest() {
@@ -350,7 +268,7 @@ uint64_t hostTimerTicks = 0;
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if (htim->Instance == htim3.Instance) {
-        hostTimerTicks++;
+        hostTimerTicks += 100;
     }
 }
 
@@ -394,15 +312,23 @@ int main(void) {
     MX_USART3_UART_Init();
     MX_TIM3_Init();
     /* USER CODE BEGIN 2 */
-//    psramTest();
 //    fatfsTest();
-//    HAL_TIM_Base_Start_IT(&htim3);
+    HAL_TIM_Base_Start_IT(&htim3);
     psramReset();
     /* USER CODE END 2 */
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
-    port_main(6, temu_default_args);
+    const char *temu_args_no_uboot[] = {
+            "temu_default_args",
+            "--addr=0x81fa0000",
+            "--exec=fw_jump.bin",
+            "--with=0x80000000#Image",
+            "--with=0x81ffd800#u-boot.dtb",
+    };
+
+
+    port_main(5, temu_args_no_uboot);
 
     while (1) {
         /* USER CODE END WHILE */
@@ -497,7 +423,7 @@ static void MX_SPI1_Init(void) {
     hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
     hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
     hspi1.Init.NSS = SPI_NSS_SOFT;
-    hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
+    hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
     hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
     hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
     hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -529,9 +455,9 @@ static void MX_TIM3_Init(void) {
 
     /* USER CODE END TIM3_Init 1 */
     htim3.Instance = TIM3;
-    htim3.Init.Prescaler = 9 - 1;
+    htim3.Init.Prescaler = 90 - 1;
     htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-    htim3.Init.Period = 8 - 1;
+    htim3.Init.Period = 80 - 1;
     htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
     if (HAL_TIM_Base_Init(&htim3) != HAL_OK) {

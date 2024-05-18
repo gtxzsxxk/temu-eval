@@ -8,11 +8,9 @@
 #include <stdint.h>
 #include "parameters.h"
 
-uint32_t port_main_memory_read_w(uint32_t offset);
+void port_main_memory_read_word_batch(uint32_t offset, uint32_t *readBuffer, uint32_t batchSize);
 
-void port_main_memory_write_w(uint32_t offset, uint32_t data);
-
-void port_main_memory_load_b(uint32_t offset, uint8_t data);
+void port_main_memory_write_word_batch(uint32_t offset, uint32_t *wordData, uint32_t batchSize);
 
 void port_main_memory_load_byte_batch(uint32_t offset, uint8_t *byteData, uint32_t batchSize);
 

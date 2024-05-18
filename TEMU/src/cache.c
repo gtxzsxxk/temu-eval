@@ -13,9 +13,9 @@ static struct cache_line DCACHE[CACHE_LINES][CACHE_WAYS] = {0};
 #define NULL (void*)0
 #endif
 
-static uint32_t physical_memory_read_w(uint32_t addr, uint8_t *intr);
+static void physical_memory_read_word_batch(uint32_t addr, uint32_t *readBuffer, uint32_t batchSize, uint8_t *intr);
 
-static void physical_memory_write_w(uint32_t addr, uint32_t data, uint8_t *intr);
+static void physical_memory_write_word_batch(uint32_t addr, uint32_t *wordData, uint32_t batchSize, uint8_t *intr);
 
 /* the physical address needs to be aligned with 4 bytes */
 static inline uint32_t cache_read(struct cache_line cache[CACHE_LINES][CACHE_WAYS], uint32_t paddr, uint8_t *miss) {
@@ -83,9 +83,7 @@ cache_load(struct cache_line cache[CACHE_LINES][CACHE_WAYS], uint32_t paddr, uin
         /* Write Back */
         uint32_t wb_addr = (CACHE_ADDR_GET_INDEX(paddr) << CACHE_OFFSET_FIELD_LENGTH) |
                            (new_cache_line->tag << (CACHE_OFFSET_FIELD_LENGTH + CACHE_INDEX_FIELD_LENGTH));
-        for (uint32_t i = 0; i < CACHE_LINE_DATA_SIZE; i++) {
-            physical_memory_write_w(wb_addr + (i << 2), new_cache_line->data[i], NULL);
-        }
+        physical_memory_write_word_batch(wb_addr, new_cache_line->data, CACHE_LINE_DATA_SIZE, NULL);
     }
 
     new_cache_line->tag = tag;
@@ -93,12 +91,7 @@ cache_load(struct cache_line cache[CACHE_LINES][CACHE_WAYS], uint32_t paddr, uin
     new_cache_line->valid = 1;
     new_cache_line->dirty = 0;
     uint32_t base_addr = (paddr >> CACHE_OFFSET_FIELD_LENGTH) << CACHE_OFFSET_FIELD_LENGTH;
-    for (uint32_t i = 0; i < CACHE_LINE_DATA_SIZE; i++) {
-        new_cache_line->data[i] = physical_memory_read_w(base_addr + (i << 2), load_fault);
-        if (load_fault && *load_fault) {
-            return;
-        }
-    }
+    physical_memory_read_word_batch(base_addr, new_cache_line->data, CACHE_LINE_DATA_SIZE, load_fault);
 }
 
 uint8_t cache_data_read_b(uint32_t paddr, uint8_t *intr) {
@@ -201,34 +194,32 @@ void cache_flush_icache() {
                 /* Write Back */
                 uint32_t wb_addr = (i << CACHE_OFFSET_FIELD_LENGTH) |
                                    (DCACHE[i][j].tag << (CACHE_OFFSET_FIELD_LENGTH + CACHE_INDEX_FIELD_LENGTH));
-                for (uint32_t k = 0; k < CACHE_LINE_DATA_SIZE; k++) {
-                    physical_memory_write_w(wb_addr + (k << 2), DCACHE[i][j].data[k], NULL);
-                }
+                physical_memory_write_word_batch(wb_addr, DCACHE[i][j].data, CACHE_LINE_DATA_SIZE, NULL);
                 DCACHE[i][j].dirty = 0;
             }
         }
     }
 }
 
-static uint32_t physical_memory_read_w(uint32_t addr, uint8_t *intr) {
+static void physical_memory_read_word_batch(uint32_t addr, uint32_t *readBuffer, uint32_t batchSize, uint8_t *intr) {
     if (addr % 4) {
         if (intr) {
             *intr = 3;
         }
-        return 0xff;
+        return;
     }
     if (addr >= RAM_BASE_ADDR && addr + 3 < RAM_BASE_ADDR + RAM_SIZE) {
-        return port_main_memory_read_w(addr - RAM_BASE_ADDR);
+        port_main_memory_read_word_batch(addr - RAM_BASE_ADDR, readBuffer, batchSize);
     } else {
         if (intr) {
             *intr = 1;
         }
 
-        return 0x6666ffff;
+        return;
     }
 }
 
-static void physical_memory_write_w(uint32_t addr, uint32_t data, uint8_t *intr) {
+static void physical_memory_write_word_batch(uint32_t addr, uint32_t *wordData, uint32_t batchSize, uint8_t *intr) {
     if (addr % 4) {
         if (intr) {
             *intr = 3;
@@ -236,7 +227,7 @@ static void physical_memory_write_w(uint32_t addr, uint32_t data, uint8_t *intr)
     }
 
     if (addr >= RAM_BASE_ADDR && addr + 3 < RAM_BASE_ADDR + RAM_SIZE) {
-        port_main_memory_write_w(addr - RAM_BASE_ADDR, data);
+        port_main_memory_write_word_batch(addr - RAM_BASE_ADDR, wordData, batchSize);
     } else {
         if (intr) {
             *intr = 1;
