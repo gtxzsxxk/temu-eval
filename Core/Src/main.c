@@ -47,6 +47,8 @@ SD_HandleTypeDef hsd;
 DMA_HandleTypeDef hdma_sdio;
 
 SPI_HandleTypeDef hspi1;
+DMA_HandleTypeDef hdma_spi1_tx;
+DMA_HandleTypeDef hdma_spi1_rx;
 
 TIM_HandleTypeDef htim3;
 
@@ -79,8 +81,9 @@ static void MX_TIM3_Init(void);
 
 void port_main_memory_read_word_batch(uint32_t offset, uint32_t *readBuffer, uint32_t batchSize) {
     /* Dispatch address to different chips */
-    uint8_t dispatch = offset >> 23;
+    while (__HAL_DMA_GET_COUNTER(&hdma_spi1_tx));
 
+    uint8_t dispatch = offset >> 23;
     switch (dispatch) {
         case 0:
             HAL_GPIO_WritePin(PSRAM_CS0_GPIO_Port, PSRAM_CS0_Pin, GPIO_PIN_RESET);
@@ -99,7 +102,6 @@ void port_main_memory_read_word_batch(uint32_t offset, uint32_t *readBuffer, uin
     }
 
     uint8_t sendBuffer[] = {0x03, offset >> 16, offset >> 8, offset};
-
     HAL_SPI_Transmit(&hspi1, sendBuffer, 4, 100);
     HAL_SPI_Receive(&hspi1, (uint8_t *) readBuffer, batchSize << 2, 100);
 
@@ -123,8 +125,9 @@ void port_main_memory_read_word_batch(uint32_t offset, uint32_t *readBuffer, uin
 
 void port_main_memory_write_word_batch(uint32_t offset, uint32_t *wordData, uint32_t batchSize) {
     /* Dispatch address to different chips */
-    uint8_t dispatch = offset >> 23;
+    while (__HAL_DMA_GET_COUNTER(&hdma_spi1_tx));
 
+    uint8_t dispatch = offset >> 23;
     switch (dispatch) {
         case 0:
             HAL_GPIO_WritePin(PSRAM_CS0_GPIO_Port, PSRAM_CS0_Pin, GPIO_PIN_RESET);
@@ -145,30 +148,21 @@ void port_main_memory_write_word_batch(uint32_t offset, uint32_t *wordData, uint
     uint8_t sendBuffer[] = {0x02, offset >> 16, offset >> 8, offset};
 
     HAL_SPI_Transmit(&hspi1, sendBuffer, 4, 100);
-    HAL_SPI_Transmit(&hspi1, (uint8_t *) wordData, batchSize << 2, 100);
+    HAL_SPI_Transmit_DMA(&hspi1, (uint8_t *) wordData, batchSize << 2);
+}
 
-    switch (dispatch) {
-        case 0:
-            HAL_GPIO_WritePin(PSRAM_CS0_GPIO_Port, PSRAM_CS0_Pin, GPIO_PIN_SET);
-            break;
-        case 1:
-            HAL_GPIO_WritePin(PSRAM_CS1_GPIO_Port, PSRAM_CS1_Pin, GPIO_PIN_SET);
-            break;
-        case 2:
-            HAL_GPIO_WritePin(PSRAM_CS2_GPIO_Port, PSRAM_CS2_Pin, GPIO_PIN_SET);
-            break;
-        case 3:
-            HAL_GPIO_WritePin(PSRAM_CS3_GPIO_Port, PSRAM_CS3_Pin, GPIO_PIN_SET);
-            break;
-        default:
-            return;
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
+    if (hspi->Instance == hspi1.Instance) {
+        HAL_GPIO_WritePin(PSRAM_CS0_GPIO_Port, PSRAM_CS0_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(PSRAM_CS1_GPIO_Port, PSRAM_CS1_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(PSRAM_CS2_GPIO_Port, PSRAM_CS2_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(PSRAM_CS3_GPIO_Port, PSRAM_CS3_Pin, GPIO_PIN_SET);
     }
 }
 
 void port_main_memory_load_byte_batch(uint32_t offset, uint8_t *byteData, uint32_t batchSize) {
     /* Dispatch address to different chips */
     uint8_t dispatch = offset >> 23;
-    uint8_t scratch;
 
     switch (dispatch) {
         case 0:
@@ -388,7 +382,7 @@ static void MX_SDIO_SD_Init(void) {
     hsd.Init.ClockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
     hsd.Init.BusWide = SDIO_BUS_WIDE_1B;
     hsd.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
-    hsd.Init.ClockDiv = 3;
+    hsd.Init.ClockDiv = 12;
     /* USER CODE BEGIN SDIO_Init 2 */
 
     /* USER CODE END SDIO_Init 2 */
@@ -417,7 +411,7 @@ static void MX_SPI1_Init(void) {
     hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
     hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
     hspi1.Init.NSS = SPI_NSS_SOFT;
-    hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+    hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
     hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
     hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
     hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -510,8 +504,15 @@ static void MX_DMA_Init(void) {
 
     /* DMA controller clock enable */
     __HAL_RCC_DMA2_CLK_ENABLE();
+    __HAL_RCC_DMA1_CLK_ENABLE();
 
     /* DMA interrupt init */
+    /* DMA1_Channel2_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
+    /* DMA1_Channel3_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, 3, 0);
+    HAL_NVIC_EnableIRQ(DMA1_Channel3_IRQn);
     /* DMA2_Channel4_5_IRQn interrupt configuration */
     HAL_NVIC_SetPriority(DMA2_Channel4_5_IRQn, 2, 0);
     HAL_NVIC_EnableIRQ(DMA2_Channel4_5_IRQn);
