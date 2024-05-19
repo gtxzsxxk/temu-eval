@@ -7,7 +7,7 @@
 
 #include <stdint.h>
 
-#define TLB_CACHE_LINE_FIELD_LENGTH     10
+#define TLB_CACHE_LINE_FIELD_LENGTH     9
 #define TLB_CACHE_LINE_SIZE             (1 << TLB_CACHE_LINE_FIELD_LENGTH)
 #define SV32_PAGE_OFFSET_FIELD_LEN      12
 #define SV32_VPN_FIELD_LENGTH           (32 - SV32_PAGE_OFFSET_FIELD_LEN)
